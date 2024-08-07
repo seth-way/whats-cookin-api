@@ -7,14 +7,18 @@ const recipes = require('./data/recipes');
 const ingredients = require('./data/ingredients');
 
 app.locals = {
-  title: 'What\'s Cookin API',
+  title: "What's Cookin API",
   users,
   recipes,
-  ingredients
-}
+  ingredients,
+};
 
 app.use(cors());
 app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.send('Express server working on Vercel');
+});
 
 app.get('/api/v1/users', (req, res) => {
   res.status(200).json({ users: app.locals.users });
@@ -34,7 +38,7 @@ app.post('/api/v1/usersRecipes', (req, res) => {
   for (let requiredParameter of ['userID', 'recipeID']) {
     if (req.body[requiredParameter] === undefined) {
       return res.status(422).json({
-        message: `You are missing a required parameter of ${requiredParameter}`
+        message: `You are missing a required parameter of ${requiredParameter}`,
       });
     }
   }
@@ -43,20 +47,20 @@ app.post('/api/v1/usersRecipes', (req, res) => {
 
   if (!foundUser) {
     return res.status(422).json({
-      message: `No user found with ID ${userID}`
+      message: `No user found with ID ${userID}`,
     });
   }
 
   if (foundUser.recipesToCook.includes(recipeID)) {
     return res.status(422).json({
-      message: `Recipe #${recipeID} is already a recipeToCook for User #${userID}`
+      message: `Recipe #${recipeID} is already a recipeToCook for User #${userID}`,
     });
   }
 
   foundUser.recipesToCook.push(recipeID);
 
   return res.status(201).json({
-    message: `Recipe #${recipeID} was added for User #${userID}`
+    message: `Recipe #${recipeID} was added for User #${userID}`,
   });
 });
 
@@ -66,7 +70,7 @@ app.delete('/api/v1/usersRecipes', (req, res) => {
   for (let requiredParameter of ['userID', 'recipeID']) {
     if (req.body[requiredParameter] === undefined) {
       return res.status(422).json({
-        message: `You are missing a required parameter of ${requiredParameter}`
+        message: `You are missing a required parameter of ${requiredParameter}`,
       });
     }
   }
@@ -75,7 +79,7 @@ app.delete('/api/v1/usersRecipes', (req, res) => {
 
   if (!foundUser) {
     return res.status(422).json({
-      message: `No user found with ID ${userID}`
+      message: `No user found with ID ${userID}`,
     });
   }
 
@@ -84,10 +88,14 @@ app.delete('/api/v1/usersRecipes', (req, res) => {
   });
 
   return res.status(200).json({
-    message: `Recipe #${recipeID} was removed for User #${userID}`
+    message: `Recipe #${recipeID} was removed for User #${userID}`,
   });
 });
 
 app.listen(port, () => {
-  console.log(`${app.locals.title} is now running on http://localhost:${port} !`)
+  console.log(
+    `${app.locals.title} is now running on http://localhost:${port} !`
+  );
 });
+
+module.exports = app;
